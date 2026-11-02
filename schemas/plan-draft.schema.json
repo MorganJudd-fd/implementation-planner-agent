@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Implementation Plan Draft",
+  "description": "The only file the LLM authors. scripts/planner.py finalize validates it and computes waves, coverage, specialty, risk and decisions.",
+  "type": "object",
+  "required": ["ticketKey", "summary", "codebaseFindings", "workstreams", "verification", "assumptions", "openQuestions"],
+  "additionalProperties": false,
+  "properties": {
+    "ticketKey": { "type": "string", "pattern": "^[A-Z][A-Z0-9]+-\\d+$" },
+    "summary": { "type": "string", "pattern": "\\S" },
+    "codebaseFindings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["finding", "evidence"],
+        "additionalProperties": false,
+        "properties": {
+          "finding": { "type": "string", "pattern": "\\S" },
+          "evidence": { "type": "string", "pattern": "\\S" }
+        }
+      }
+    },
+    "workstreams": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "objective", "filesOwned", "filesRead", "steps", "verification", "acceptanceCriteria", "dependsOn"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^ws\\d+$" },
+          "title": { "type": "string", "pattern": "\\S" },
+          "specialtyHint": { "type": "string" },
+          "objective": { "type": "string", "pattern": "\\S" },
+          "filesOwned": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["path", "action"],
+              "additionalProperties": false,
+              "properties": {
+                "path": { "type": "string", "pattern": "\\S" },
+                "action": { "enum": ["create", "modify", "delete"] }
+              }
+            }
+          },
+          "filesRead": { "type": "array", "items": { "type": "string" } },
+          "steps": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "\\S" } },
+          "verification": { "type": "array", "items": { "type": "string", "pattern": "\\S" } },
+          "manualVerification": { "type": "string" },
+          "acceptanceCriteria": { "type": "array", "items": { "type": "string" } },
+          "dependsOn": { "type": "array", "items": { "type": "string" } },
+          "riskNote": { "type": "string" }
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "required": ["fullSuite", "manualChecks", "rollback"],
+      "additionalProperties": false,
+      "properties": {
+        "fullSuite": { "type": "array", "items": { "type": "string", "pattern": "\\S" } },
+        "manualChecks": { "type": "array", "items": { "type": "string" } },
+        "rollback": { "type": "string", "pattern": "\\S" }
+      }
+    },
+    "docsToUpdate": { "type": "array", "items": { "type": "string" } },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ambiguityId", "decision"],
+        "additionalProperties": false,
+        "properties": {
+          "ambiguityId": { "type": "string", "pattern": "^AMB\\d+$" },
+          "decision": { "type": "string", "pattern": "\\S" }
+        }
+      }
+    },
+    "openQuestions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["question", "whyItMatters"],
+        "additionalProperties": false,
+        "properties": {
+          "ambiguityId": { "type": "string", "pattern": "^AMB\\d+$" },
+          "question": { "type": "string", "pattern": "\\S" },
+          "whyItMatters": { "type": "string" }
+        }
+      }
+    },
+    "uncoveredAcceptanceCriteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "reason"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "reason": { "type": "string", "pattern": "\\S" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,147 @@
+{
+  "version": "1.0.0",
+  "repoSearch": {
+    "roots": ["~/Source"],
+    "maxDepth": 2
+  },
+  "limits": {
+    "maxWorkstreams": 12,
+    "maxFilesOwnedPerWorkstream": 8,
+    "maxFinalizeAttempts": 3
+  },
+  "highChurn": [
+    "**/package-lock.json",
+    "**/pnpm-lock.yaml",
+    "**/yarn.lock",
+    "**/bun.lock",
+    "**/poetry.lock",
+    "**/uv.lock",
+    "**/Cargo.lock",
+    "**/go.sum",
+    "**/Gemfile.lock",
+    "**/index.ts",
+    "**/index.tsx",
+    "**/index.js",
+    "**/index.mjs",
+    "**/routes.*",
+    "**/router.*",
+    "**/*.module.ts",
+    "**/container.*",
+    "**/migrations/index.*",
+    "**/schema.prisma"
+  ],
+  "patterns": {
+    "security": "(^|/|_|-)(auth|authn|authz|session|token|secret|crypto|permission|password|oauth|jwt|acl|rbac|csrf|sanitiz)",
+    "migration": "(^|/)(migrations?|migrate|alembic|flyway)/|\\.sql$",
+    "securityText": "\\b(auth\\w*|login|session|token|secret|credential|password|permission|oauth|jwt|csrf|xss|sanitiz\\w*|encrypt\\w*)\\b"
+  },
+  "specialties": {
+    "fallback": "general-purpose",
+    "baseline": {
+      "backend-architect": "APIs, services, data models, distributed concerns",
+      "frontend-engineer": "Components, state, accessibility, client performance",
+      "test-writer": "Unit, integration and end-to-end test suites",
+      "security-auditor": "Authn/authz, input validation, secrets, OWASP",
+      "performance-engineer": "Profiling, queries, caching, concurrency",
+      "devops-engineer": "CI/CD, containers, IaC, deploy config",
+      "documentation-writer": "READMEs, API docs, ADRs",
+      "data-analyst": "Schemas, migrations, analytics",
+      "general-purpose": "Anything that does not fit cleanly elsewhere"
+    },
+    "globRules": [
+      {
+        "specialty": "test-writer",
+        "globs": [
+          "**/test/**",
+          "**/tests/**",
+          "**/__tests__/**",
+          "**/*.test.*",
+          "**/*.spec.*",
+          "**/test_*.py",
+          "**/*_test.py",
+          "**/*_test.go"
+        ]
+      },
+      {
+        "specialty": "documentation-writer",
+        "globs": [
+          "**/*.md",
+          "**/*.mdx",
+          "docs/**",
+          "**/*.rst"
+        ]
+      },
+      {
+        "specialty": "devops-engineer",
+        "globs": [
+          ".github/**",
+          ".gitlab-ci.yml",
+          "**/Dockerfile",
+          "**/docker-compose*.yml",
+          "**/*.tf",
+          "**/helm/**",
+          "**/k8s/**",
+          "**/Jenkinsfile"
+        ]
+      },
+      {
+        "specialty": "data-analyst",
+        "globs": [
+          "**/migrations/**",
+          "**/*.sql",
+          "**/schema.prisma"
+        ]
+      },
+      {
+        "specialty": "frontend-engineer",
+        "globs": [
+          "**/*.tsx",
+          "**/*.jsx",
+          "**/*.vue",
+          "**/*.svelte",
+          "**/*.css",
+          "**/*.scss",
+          "**/components/**"
+        ]
+      },
+      {
+        "specialty": "backend-architect",
+        "globs": [
+          "**/*.py",
+          "**/*.go",
+          "**/*.java",
+          "**/*.kt",
+          "**/*.rb",
+          "**/*.rs",
+          "**/*.cs",
+          "**/api/**",
+          "**/services/**",
+          "**/server/**"
+        ]
+      }
+    ]
+  },
+  "decisions": {
+    "version": "1.0.0",
+    "profile": "keystone-decide-fast",
+    "defaultUrl": "https://developer-bedrock-platform.fandango.com",
+    "timeoutSeconds": 30,
+    "maxRetryAfterSeconds": 30,
+    "maxQuestionsPerCall": 32,
+    "maxStateChars": 128000,
+    "riskLevels": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "questions": {
+      "specialty": "For workstream {id} (\"{title}\"), which agent should own the implementation? Prefer a repository-specific agent whose description matches the work over a generic role. Answer undetermined if the workstream description does not support a clear choice.",
+      "risk": "How risky is workstream {id} (\"{title}\") to implement without breaking existing behavior? Consider blast radius, public contract changes, data migrations and concurrency.",
+      "security": "Does workstream {id} (\"{title}\") touch authentication, authorization, secrets handling, or validation of untrusted input?"
+    },
+    "securityCriteria": {
+      "true": "The workstream changes or depends on auth, permissions, secrets, or input validation",
+      "false": "The workstream has no security-sensitive surface"
+    }
+  }
+}

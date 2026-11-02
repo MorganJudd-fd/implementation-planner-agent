@@ -1,0 +1,44 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Agent(Explore)",
+      "Bash(python3 scripts/planner.py:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git diff:*)",
+      "Bash(git ls-files:*)",
+      "Bash(git -C:*)",
+      "Edit(//**/.claude/plans/*.draft.json)",
+      "Edit(//**/.claude/plans/*.input.json)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/hooks/guard-writes.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/hooks/guard-bash.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
