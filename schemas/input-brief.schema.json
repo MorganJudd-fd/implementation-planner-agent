@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Implementation Planner Input Brief",
+  "description": "Minimum ticket brief the planner needs. Extra fields are ignored, so a jira-intake-agent state file is accepted as-is.",
+  "type": "object",
+  "required": ["ticket", "description"],
+  "properties": {
+    "ticket": {
+      "type": "object",
+      "required": ["key", "summary"],
+      "properties": {
+        "key": { "type": "string", "pattern": "^[A-Z][A-Z0-9]+-\\d+$" },
+        "summary": { "type": "string", "pattern": "\\S" },
+        "url": { "type": "string" }
+      }
+    },
+    "description": { "type": "string" },
+    "acceptanceCriteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "assertion"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^\\S+$" },
+          "assertion": { "type": "string", "pattern": "\\S" }
+        }
+      }
+    },
+    "proposedAcceptanceCriteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "assertion"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^\\S+$" },
+          "assertion": { "type": "string", "pattern": "\\S" }
+        }
+      }
+    },
+    "ambiguities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["question"],
+        "properties": {
+          "question": { "type": "string" },
+          "whyItMatters": { "type": "string" }
+        }
+      }
+    },
+    "classification": {
+      "type": "object",
+      "properties": {
+        "changeType": { "type": "string" }
+      }
+    },
+    "repository": {
+      "type": "object",
+      "properties": {
+        "toplevel": { "type": "string" }
+      }
+    }
+  },
+  "anyOf": [
+    { "required": ["acceptanceCriteria"], "properties": { "acceptanceCriteria": { "type": "array", "minItems": 1 } } },
+    { "required": ["proposedAcceptanceCriteria"], "properties": { "proposedAcceptanceCriteria": { "type": "array", "minItems": 1 } } }
+  ]
+}

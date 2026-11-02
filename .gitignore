@@ -1,0 +1,12 @@
+.claude/settings.local.json
+.claude/sessions/
+.claude/jira-cycle/
+.DS_Store
+node_modules/
+.envrc
+.idea/
+.vscode/
+*.log
+__pycache__/
+*.pyc
+.claude/targets.json

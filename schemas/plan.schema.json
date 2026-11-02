@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Implementation Plan",
+  "description": "Final plan written by scripts/planner.py finalize to <repo>/.claude/plans/<KEY>.plan.json. This is the contract consumers depend on.",
+  "type": "object",
+  "required": [
+    "schemaVersion", "planner", "policyVersion", "decisionsVersion", "generatedAt", "ticket", "repository",
+    "summary", "codebaseFindings", "workstreams", "waves", "needsWorktreeIsolation", "speedup",
+    "verification", "docsToUpdate", "assumptions", "openQuestions", "uncoveredAcceptanceCriteria",
+    "reviewFlags", "decisionSource", "decisions", "warnings"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "planner": {
+      "type": "object",
+      "required": ["name", "version"],
+      "additionalProperties": false,
+      "properties": { "name": { "type": "string" }, "version": { "type": "string" } }
+    },
+    "policyVersion": { "type": "string" },
+    "decisionsVersion": { "type": "string" },
+    "generatedAt": { "type": "string" },
+    "ticket": {
+      "type": "object",
+      "required": ["key", "summary"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "type": "string", "pattern": "^[A-Z][A-Z0-9]+-\\d+$" },
+        "summary": { "type": "string" },
+        "url": { "type": ["string", "null"] }
+      }
+    },
+    "repository": {
+      "type": "object",
+      "required": ["toplevel", "resolvedVia", "originUrl", "gitHead", "dirty"],
+      "additionalProperties": false,
+      "properties": {
+        "toplevel": { "type": "string" },
+        "resolvedVia": { "enum": ["path", "name", "brief", "intake-state"] },
+        "originUrl": { "type": ["string", "null"] },
+        "gitHead": { "type": ["string", "null"] },
+        "dirty": { "type": "boolean" }
+      }
+    },
+    "summary": { "type": "string" },
+    "codebaseFindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding", "evidence"],
+        "additionalProperties": false,
+        "properties": { "finding": { "type": "string" }, "evidence": { "type": "string" } }
+      }
+    },
+    "workstreams": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id", "title", "specialty", "specialtySource", "objective", "filesOwned", "filesRead",
+          "steps", "verification", "acceptanceCriteria", "dependsOn", "risk", "securitySensitive", "wave"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^ws\\d+$" },
+          "title": { "type": "string" },
+          "specialty": { "type": "string" },
+          "specialtySource": { "enum": ["installed-project", "installed-user", "baseline"] },
+          "specialtyHint": { "type": "string" },
+          "objective": { "type": "string" },
+          "filesOwned": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["path", "action"],
+              "additionalProperties": false,
+              "properties": { "path": { "type": "string" }, "action": { "enum": ["create", "modify", "delete"] } }
+            }
+          },
+          "filesRead": { "type": "array", "items": { "type": "string" } },
+          "steps": { "type": "array", "items": { "type": "string" } },
+          "verification": { "type": "array", "items": { "type": "string" } },
+          "manualVerification": { "type": "string" },
+          "acceptanceCriteria": { "type": "array", "items": { "type": "string" } },
+          "dependsOn": { "type": "array", "items": { "type": "string" } },
+          "risk": {
+            "type": "object",
+            "required": ["level", "reason"],
+            "additionalProperties": false,
+            "properties": { "level": { "enum": ["low", "medium", "high"] }, "reason": { "type": "string" } }
+          },
+          "securitySensitive": { "type": "boolean" },
+          "wave": { "type": "integer" }
+        }
+      }
+    },
+    "waves": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["wave", "parallel", "workstreams"],
+        "additionalProperties": false,
+        "properties": {
+          "wave": { "type": "integer" },
+          "parallel": { "type": "boolean" },
+          "workstreams": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+        }
+      }
+    },
+    "needsWorktreeIsolation": { "type": "boolean" },
+    "speedup": {
+      "type": "object",
+      "required": ["serialSteps", "waves"],
+      "additionalProperties": false,
+      "properties": { "serialSteps": { "type": "integer" }, "waves": { "type": "integer" } }
+    },
+    "verification": {
+      "type": "object",
+      "required": ["fullSuite", "acCoverage", "manualChecks", "rollback"],
+      "additionalProperties": false,
+      "properties": {
+        "fullSuite": { "type": "array", "items": { "type": "string" } },
+        "acCoverage": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } },
+        "manualChecks": { "type": "array", "items": { "type": "string" } },
+        "rollback": { "type": "string" }
+      }
+    },
+    "docsToUpdate": { "type": "array", "items": { "type": "string" } },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ambiguityId", "ambiguity", "decision"],
+        "additionalProperties": false,
+        "properties": {
+          "ambiguityId": { "type": "string" },
+          "ambiguity": { "type": "string" },
+          "decision": { "type": "string" }
+        }
+      }
+    },
+    "openQuestions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["question", "whyItMatters"],
+        "additionalProperties": false,
+        "properties": {
+          "ambiguityId": { "type": "string" },
+          "question": { "type": "string" },
+          "whyItMatters": { "type": "string" }
+        }
+      }
+    },
+    "uncoveredAcceptanceCriteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "reason"],
+        "additionalProperties": false,
+        "properties": { "id": { "type": "string" }, "reason": { "type": "string" } }
+      }
+    },
+    "reviewFlags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["target", "reason", "source"],
+        "additionalProperties": false,
+        "properties": {
+          "target": { "type": "string" },
+          "reason": { "type": "string" },
+          "source": { "enum": ["keystone", "fallback", "validation"] }
+        }
+      }
+    },
+    "decisionSource": { "enum": ["keystone", "fallback", "mixed"] },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["questionId", "source", "decisionId", "answer", "confidence", "band"],
+        "additionalProperties": false,
+        "properties": {
+          "questionId": { "type": "string" },
+          "source": { "enum": ["keystone", "fallback"] },
+          "decisionId": { "type": ["string", "null"] },
+          "answer": { "type": ["string", "number", "boolean"] },
+          "confidence": { "type": ["number", "null"] },
+          "band": { "enum": ["act", "review", "escalate", null] }
+        }
+      }
+    },
+    "warnings": { "type": "array", "items": { "type": "string" } }
+  }
+}
